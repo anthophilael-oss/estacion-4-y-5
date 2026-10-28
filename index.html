@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Story Map: El zorro y la cosecha de quinua</title>
+<style>
+:root{--bg:#F4F6F8;--ink:#1F2933;--card:#FFFFFF;--line:#7B8794;--brand:#1D4E89;--hl:#FFE600;--ok:#1B6E3A;--ok-bg:#E3F4E8;--warn:#7A4A00;--warn-bg:#FFF1DC;--fs:22px}
+*{box-sizing:border-box}
+html{font-size:var(--fs)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Verdana,Arial,"OpenDyslexic",sans-serif;line-height:1.6;letter-spacing:.02em;word-spacing:.08em}
+h1,h2,h3,p{margin:0}
+.skip{position:absolute;left:8px;top:-80px;background:var(--brand);color:#fff;padding:12px 16px;border-radius:8px;z-index:10}
+.skip:focus{top:8px}
+:focus-visible{outline:4px solid var(--brand);outline-offset:3px;box-shadow:0 0 0 7px #fff}
+header{max-width:1400px;margin:0 auto;padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+header h1{font-size:1.05rem}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;letter-spacing:inherit;cursor:pointer;min-height:48px;min-width:48px;border-radius:10px;border:2px solid var(--brand);background:var(--card);color:var(--brand);padding:8px 14px}
+button.primary,button[aria-pressed="true"]{background:var(--brand);color:#fff}
+.tools button{font-size:.7rem}
+main{max-width:1400px;margin:0 auto;padding:0 20px 40px;display:grid;gap:18px}
+section,aside{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px}
+h2{font-size:1.05rem;margin-bottom:10px}
+.top{display:grid;gap:18px;grid-template-columns:1fr}
+@media(min-width:1000px){.top{grid-template-columns:minmax(0,2.2fr) minmax(0,1fr)}.top.solo{grid-template-columns:1fr}}
+.pars{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:1000px){.pars{grid-template-columns:repeat(3,1fr)}}
+.par{border:2px solid var(--line);border-radius:10px;padding:10px 12px;position:relative}
+.par h3{font-size:.7rem;font-weight:700;color:#3E4C59;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.par p{font-size:.8rem}
+.par .badge{display:none;font-weight:700;font-size:.7rem}
+.par.hl{background:var(--hl);border:4px solid #7A6A00}
+.par.hl h3{color:var(--ink)}
+.par.hl .badge{display:block}
+.keys p{font-size:.8rem;margin-bottom:8px}
+.consulta-msg{font-size:.85rem;background:var(--warn-bg);border:2px solid var(--warn);border-radius:10px;padding:12px 14px;margin-bottom:14px}
+.retry-wrap{display:flex;justify-content:center;margin-top:18px}
+.zonas{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:1000px){.zonas{grid-template-columns:repeat(3,1fr)}}
+.box{border:4px dashed var(--line);border-radius:12px;padding:12px;min-height:200px;background:#FBFCFD;display:flex;flex-direction:column;gap:10px}
+.box.over{background:#E8F0FA;border-color:var(--brand)}
+.box.done{border:5px solid var(--ok);border-style:solid;background:var(--ok-bg)}
+.box h3{font-size:.95rem;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.box .q{font-size:.75rem}
+.slot{width:100%;font-size:.75rem}
+.card{background:#fff;border:3px solid var(--brand);border-radius:12px;padding:12px;font-size:.8rem;display:flex;gap:10px;align-items:flex-start;cursor:grab;transition:opacity .4s,transform .4s}
+.card .txt{flex:1}
+.card b{display:inline-block;margin-bottom:4px}
+.card.sel{background:#FFF8C2;border-width:5px}
+.card.lock{cursor:default;border-color:var(--ok);border-width:5px;background:#fff}
+.cardmain{all:unset;flex:1;cursor:pointer;display:block;border-radius:6px}
+.cardmain:focus-visible{outline:4px solid var(--brand);outline-offset:4px}
+.bank{display:grid;gap:12px;grid-template-columns:1fr}
+@media(min-width:1000px){.bank{grid-template-columns:repeat(3,1fr)}}
+.empty{font-size:.8rem}
+#fb{display:none;padding:14px 16px;border-radius:10px;border:2px solid var(--line);font-size:.85rem}
+#fb.show{display:block}
+#fb.ok{background:var(--ok-bg);border-color:var(--ok);color:#12482A;font-weight:700}
+#fb.soft{background:var(--warn-bg);border-color:var(--warn)}
+#fb.info{background:#E8F0FA;border-color:var(--brand)}
+.final{border:5px solid var(--ok);background:var(--ok-bg)}
+.final .row{background:#fff;border:2px solid var(--ok);border-radius:10px;padding:12px;margin-bottom:10px;font-size:.85rem}
+.final .row strong{display:block}
+.stars{font-size:1.4rem;letter-spacing:.2em;color:#7A5C00}
+.fall{position:fixed;top:-40px;font-size:2rem;color:#B38600;pointer-events:none;z-index:20;animation:fall 2.2s ease-in forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(360deg);opacity:.2}}
+@media(prefers-reduced-motion:reduce){.fall{display:none}*{animation:none!important;transition:none!important}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+.screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;padding:24px 20px;text-align:center;background:linear-gradient(180deg,#E8F0FA 0%,#FFF8C2 100%)}
+.screen .logo{max-height:110px;max-width:70%;object-fit:contain}
+.screen h2{font-size:1.3rem;color:var(--brand);margin:0}
+.big{font-size:1rem;font-weight:700;padding:14px 34px;border-radius:14px;min-height:56px}
+.ind{max-width:820px;width:100%;display:grid;gap:16px;text-align:left}
+.ind .paso{background:#fff;border:3px solid var(--brand);border-radius:16px;padding:16px 18px}
+.ind .paso h3{font-size:1rem;color:var(--brand);margin-bottom:8px}
+.ind .paso ul{margin:0;padding-left:1.2em;font-size:.85rem}
+.ind .paso li{margin-bottom:6px}
+.ind .paso.fin{border-color:var(--ok);background:var(--ok-bg)}
+.ind .paso.fin h3{color:var(--ok)}
+.ind .tutor-mini{display:flex;align-items:center;gap:14px;justify-content:center}
+.ind .tutor-mini img{max-height:120px}
+
+/* ---- Pantalla 1: Bienvenida (según imagen de referencia) ---- */
+.screen.wel{background:#FFF8EC;gap:22px}
+.screen.wel .logo{max-height:70px}
+.wcard{max-width:1040px;width:100%;border:5px solid #E8C468;border-radius:34px;background:linear-gradient(180deg,#FFF8EC 0%,#FFF0D6 100%);padding:28px;display:flex;flex-direction:column;align-items:center;gap:26px;text-align:left}
+.wrow{display:flex;gap:44px;align-items:center;width:100%}
+.wcard .tutor{width:316px;height:316px;max-width:none;max-height:none;object-fit:cover;border-radius:22px;flex:none}
+.bubble{position:relative;flex:1;min-width:0;background:#fff;border:4px solid #F2B93B;border-radius:28px;padding:22px 28px}
+.bubble::before{content:"";position:absolute;left:-17px;top:50%;width:28px;height:28px;background:#fff;border-left:4px solid #F2B93B;border-bottom:4px solid #F2B93B;transform:translateY(-50%) rotate(45deg)}
+.bubble h1{font-size:1.15rem;line-height:1.35;color:var(--brand);text-align:center;margin-bottom:6px}
+.bubble .est{font-size:.7rem;text-align:center;margin-bottom:12px}
+.bubble .intro{font-size:.72rem;margin-bottom:12px}
+.wl{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.wl li{display:flex;gap:14px;align-items:center;font-size:.7rem;line-height:1.45}
+.wl .ic{flex:none;width:46px;height:46px;border-radius:50%;border:3px solid #F2B93B;background:#FFF8E1;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+.wbtn{background:#2B3A4A;color:#fff;border:none;border-radius:999px;font-size:.85rem;font-weight:700;padding:14px 44px;min-height:56px}
+.wbtn:focus-visible{outline:4px solid var(--brand);outline-offset:4px}
+@media(max-width:820px){
+  .wrow{flex-direction:column;gap:30px}
+  .wcard .tutor{width:min(316px,80%);height:auto;aspect-ratio:1/1}
+  .bubble::before{left:50%;top:-17px;transform:translateX(-50%) rotate(135deg)}
+}
+
+.insig{display:none;flex-direction:column;align-items:center;gap:8px;margin-top:14px;text-align:center;animation:pop .7s ease-out}
+.insig.show{display:flex}
+.insig svg{width:190px;height:190px}
+.insig p{font-weight:700;font-size:.9rem}
+@keyframes pop{0%{transform:scale(.2) rotate(-20deg);opacity:0}70%{transform:scale(1.12) rotate(4deg);opacity:1}100%{transform:scale(1) rotate(0)}}
+
+.nom{display:block;margin:12px 0}
+.nom label{display:block;font-size:.8rem;font-weight:700;margin-bottom:6px}
+.nom input{font:inherit;font-size:.85rem;padding:10px 12px;min-height:48px;width:100%;max-width:420px;border:2px solid var(--line);border-radius:10px}
+.acc{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+#printArea{display:none}
+@media print{
+  body>*:not(#printArea){display:none!important}
+  #printArea{display:flex!important;justify-content:center;align-items:center;min-height:100vh}
+  #printArea svg{width:15cm;height:auto}
+}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- PÁGINA 1: BIENVENIDA -->
+<div id="bienvenida" class="screen wel">
+  <img class="logo" src="logo.png" alt="Logo del programa" onerror="this.style.display='none'">
+  <div class="wcard">
+    <div class="wrow">
+      <img class="tutor" src="tutor.png" alt="Tu tutor" onerror="this.style.display='none'">
+      <div class="bubble">
+        <h1>¡Hola! Soy tu tutor.<br>¡Bienvenido!</h1>
+        <p class="est">Estación 4 y 5 · Armamos el cuento y celebramos</p>
+        <p class="intro">Hoy vamos a armar el cuento. ¡Es muy fácil! Esto haremos:</p>
+        <ul class="wl">
+          <li><span class="ic" aria-hidden="true">🗺️</span><span>Ordenaremos las tarjetas del cuento en Inicio, Nudo y Desenlace.</span></li>
+          <li><span class="ic" aria-hidden="true">💡</span><span>Si te equivocas, te mostraré el texto para consultar. ¡Equivocarse está bien!</span></li>
+          <li><span class="ic" aria-hidden="true">⭐</span><span>Te felicitaré y celebraremos con estrellas.</span></li>
+        </ul>
+      </div>
+    </div>
+    <button class="wbtn" id="btnListo">¡Estoy listo!</button>
+  </div>
+</div>
+
+<div id="indicaciones" class="screen" hidden>
+  <h2>¿Qué vamos a hacer?</h2>
+  <div class="ind">
+    <div class="paso">
+      <h3>🗺️ Mapa de la Historia (4 a 5 minutos)</h3>
+      <ul>
+        <li>Vamos a ordenar las tarjetas del cuento.</li>
+        <li>Cada tarjeta va en una caja: <strong>Inicio</strong> (cómo empieza), <strong>Nudo</strong> (el problema) o <strong>Desenlace</strong> (cómo termina).</li>
+        <li>Toca una tarjeta y luego toca la caja donde va. También puedes arrastrarla con el dedo o el mouse.</li>
+        <li>Si te equivocas, no pasa nada: leerás el texto con el párrafo en amarillo y volverás a intentarlo.</li>
+      </ul>
+    </div>
+    <div class="paso fin">
+      <h3>🎉 Celebrar (1 a 2 minutos)</h3>
+      <ul>
+        <li>Cuando termines, verás una lluvia de estrellas y confeti.</li>
+        <li>Te daremos un mensaje de felicitación y de despedida. ¡Lo hiciste muy bien!</li>
+      </ul>
+    </div>
+  </div>
+  <button class="primary big" id="btnArmar">¡Armar el cuento!</button>
+</div>
+
+<div id="juego" hidden>
+<a class="skip" href="#mapa">Saltar al mapa de la historia</a>
+<header>
+  <h1>Story Map: El zorro y la cosecha de quinua</h1>
+  <div class="tools" role="group" aria-label="Preferencias">
+    <button id="tMenos" aria-label="Letra más pequeña">A−</button>
+    <button id="tMas" aria-label="Letra más grande">A+</button>
+  </div>
+</header>
+<main>
+  <div class="top solo" id="topWrap">
+    <!-- TEXTO PARA CONSULTAR: solo se ve después de un error -->
+    <section aria-labelledby="hT" id="textoSec" hidden>
+      <h2 id="hT">Texto para consultar</h2>
+      <p class="consulta-msg" id="consultaMsg" role="status" aria-live="polite"></p>
+      <div class="pars">
+        <div class="par" id="p0"><span class="badge">★ Mira aquí</span><p>En un valle de Puno, Mateo sembraba quinua dorada. Cerca vivía el zorro Antonio, a quien no le gustaba trabajar.</p></div>
+        <div class="par" id="p1"><span class="badge">★ Mira aquí</span><p>Un día, Antonio le dijo a Mateo: "Si me das un saco de quinua, cuidaré tu chacra toda la semana". Mateo aceptó. Pero cuando el campesino se fue, Antonio se comió la quinua y se quedó dormido. Los pájaros aprovecharon y dañaron las plantas.</p></div>
+        <div class="par" id="p2"><span class="badge">★ Mira aquí</span><p>Al regresar, Mateo vio el engaño y le dijo: "La confianza se gana con acciones, no con palabras". Antonio se sintió avergonzado y prometió reparar su falta.</p></div>
+      </div>
+      <div class="retry-wrap"><button class="primary big" id="btnRetry">🔄 Volver a intentarlo</button></div>
+    </section>
+    <!-- ELEMENTOS CLAVE -->
+    <aside class="keys" aria-labelledby="hK" id="keysSec">
+      <h2 id="hK">Elementos clave</h2>
+      <p><strong>Personajes:</strong> Mateo (campesino), Antonio (zorro) y los pájaros.</p>
+      <p><strong>Escenario:</strong> El valle de Puno / La chacra de quinua.</p>
+    </aside>
+  </div>
+
+  <!-- ORGANIZADOR VISUAL -->
+  <section id="mapa" aria-labelledby="hM">
+    <h2 id="hM">Mapa de la historia</h2>
+    <p id="guia" style="font-size:.8rem;margin-bottom:12px">Elige una tarjeta de abajo. Luego toca la caja donde va. También puedes arrastrarla.</p>
+    <div class="zonas" id="zonas"></div>
+  </section>
+
+  <div id="fb" role="status" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- BANCO DE TARJETAS -->
+  <section aria-labelledby="hB" id="bancoSec">
+    <h2 id="hB">Banco de tarjetas</h2>
+    <div class="bank" id="banco"></div>
+    <p class="empty" id="vacio" hidden>¡Ya no quedan tarjetas!</p>
+  </section>
+
+  <section id="final" class="final" hidden aria-labelledby="hF"></section>
+</main>
+</div>
+
+<div id="printArea" aria-hidden="true"></div>
+
+<script>
+(function(){
+"use strict";
+const ZONAS=[
+ {id:"INICIO",ico:"🟢",nom:"INICIO",q:"¿Cómo empieza la historia?",p:0,art:"el Inicio"},
+ {id:"NUDO",ico:"🟡",nom:"NUDO",q:"¿Cuál es el problema?",p:1,art:"el Nudo"},
+ {id:"DESENLACE",ico:"🔴",nom:"DESENLACE",q:"¿Cómo termina la historia?",p:2,art:"el Desenlace"}];
+const CARDS=[
+ {id:"A",t:"Mateo trabajaba sembrando quinua dorada en Puno y al zorro Antonio no le gustaba trabajar.",d:"INICIO"},
+ {id:"B",t:"Antonio engañó a Mateo, se comió la quinua, se durmió y los pájaros dañaron la cosecha.",d:"NUDO"},
+ {id:"C",t:"Mateo le enseñó que la confianza se gana con acciones y Antonio prometió reparar su error.",d:"DESENLACE"}];
+const ORDEN=["B","C","A"];
+const $=id=>document.getElementById(id);
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+let sel=null,busy=false,placed={},voz=true,son=true,fs=22,ctx=null,voice=null;
+
+/* ---- Voz ---- */
+/* Solo voz humana: grabaciones en la carpeta "audio/". Si un archivo no existe, no suena nada. */
+let aud=null;
+function parar(){if(aud){aud.pause();aud=null}}
+function say(t,key){
+  if(!voz||!key)return;
+  parar();
+  const a=new Audio("audio/"+key+".mp3");aud=a;
+  a.onerror=()=>{if(aud===a)aud=null};
+  const p=a.play();if(p&&p.catch)p.catch(()=>{if(aud===a)aud=null});
+}
+/* ---- Sonido y confeti ---- */
+function exito(largo){
+  if(!son)return;
+  try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();
+    (largo?[523.25,659.25,783.99,1046.5]:[659.25,880]).forEach((f,k)=>{
+      const o=ctx.createOscillator(),g=ctx.createGain(),t=ctx.currentTime+k*.14;
+      o.type="sine";o.frequency.value=f;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.12,t+.03);g.gain.exponentialRampToValueAtTime(.001,t+.4);
+      o.connect(g).connect(ctx.destination);o.start(t);o.stop(t+.45)});
+  }catch(e){}
+}
+function confeti(){
+  if(reduce)return;
+  for(let k=0;k<16;k++){const s=document.createElement("span");s.className="fall";s.setAttribute("aria-hidden","true");s.textContent=k%2?"★":"✦";
+    s.style.left=(5+Math.random()*90)+"vw";s.style.animationDelay=(Math.random()*.6)+"s";document.body.appendChild(s);setTimeout(()=>s.remove(),3200)}
+}
+let fbTimer=null;
+function msg(t,c){clearTimeout(fbTimer);const f=$("fb");f.className="show "+c;f.textContent=t}
+function limpiarMsg(){clearTimeout(fbTimer);const f=$("fb");f.className="";f.textContent=""}
+function marcar(n){[0,1,2].forEach(k=>$("p"+k).classList.toggle("hl",k===n))}
+
+/* ---- Vistas: juego (mapa + tarjetas) o consulta (solo texto) ---- */
+function vistaJuego(){
+  $("textoSec").hidden=true;
+  $("topWrap").classList.add("solo");
+  $("keysSec").hidden=false;
+  $("mapa").hidden=false;
+  $("bancoSec").hidden=false;
+  marcar(-1);
+}
+function vistaConsulta(n,texto){
+  $("keysSec").hidden=true;
+  $("mapa").hidden=true;
+  $("bancoSec").hidden=true;
+  limpiarMsg();
+  $("consultaMsg").textContent=texto;
+  $("textoSec").hidden=false;
+  marcar(n);
+  window.scrollTo(0,0);
+  $("p"+n).scrollIntoView({block:"nearest",behavior:reduce?"auto":"smooth"});
+  $("btnRetry").focus({preventScroll:true});
+}
+
+/* ---- Construcción ---- */
+function zonas(){
+  $("zonas").innerHTML="";
+  ZONAS.forEach(z=>{
+    const b=document.createElement("div");b.className="box";b.id="z-"+z.id;b.dataset.z=z.id;
+    b.innerHTML=`<h3><span>${z.ico} ${z.nom}</span></h3>
+      <p class="q">${z.q}</p><div class="dest"></div>
+      <button class="slot" aria-label="Poner la tarjeta elegida en ${z.nom}">Poner aquí</button>`;
+    b.querySelector(".slot").onclick=()=>intento(z.id);
+    b.addEventListener("dragover",e=>{e.preventDefault();b.classList.add("over")});
+    b.addEventListener("dragleave",()=>b.classList.remove("over"));
+    b.addEventListener("drop",e=>{e.preventDefault();b.classList.remove("over");const id=e.dataTransfer.getData("text/plain");if(id){sel=id;intento(z.id)}});
+    $("zonas").appendChild(b)});
+}
+function tarjeta(c,locked){
+  const d=document.createElement("div");d.className="card"+(locked?" lock":"");d.id="c-"+c.id;
+  d.innerHTML=`<button class="cardmain" ${locked?"disabled":""} aria-pressed="false"><span class="txt" style="display:block">${c.t}</span></button>`;
+  if(!locked){
+    d.draggable=true;
+    d.addEventListener("dragstart",e=>{if(busy){e.preventDefault();return}e.dataTransfer.setData("text/plain",c.id);elegir(c.id,true)});
+    d.querySelector(".cardmain").onclick=()=>elegir(c.id,false);
+  }
+  return d;
+}
+function banco(){
+  $("banco").innerHTML="";
+  ORDEN.filter(id=>!placed[id]).forEach(id=>$("banco").appendChild(tarjeta(CARDS.find(c=>c.id===id))));
+  $("vacio").hidden=Object.keys(placed).length<3;
+}
+function elegir(id,drag){
+  if(busy||placed[id])return;
+  sel=id;
+  document.querySelectorAll("#banco .card").forEach(el=>{const on=el.id==="c-"+id;el.classList.toggle("sel",on);el.querySelector(".cardmain").setAttribute("aria-pressed",on)});
+  if(!drag){msg("Elegiste una tarjeta. Ahora toca la caja donde va.","info");say("Elegiste una tarjeta. Ahora toca la caja donde va.","elegiste")}
+}
+/* ---- Verificación ---- */
+function intento(zid){
+  if(busy)return;
+  if(!sel){msg("Primero elige una tarjeta del banco.","info");say("Primero elige una tarjeta del banco.","primero");return}
+  const c=CARDS.find(x=>x.id===sel),z=ZONAS.find(x=>x.id===zid);
+  if(placed[zid+"_z"]){msg("Esa caja ya tiene su tarjeta. Prueba en otra.","info");fbTimer=setTimeout(limpiarMsg,3000);return}
+  if(c.d===zid){correcto(c,z)}else{incorrecto(c,z)}
+}
+function correcto(c,z){
+  placed[c.id]=z.id;placed[z.id+"_z"]=c.id;
+  const box=$("z-"+z.id),dest=box.querySelector(".dest");
+  dest.appendChild(tarjeta(c,true));box.classList.add("done");
+  const sl=box.querySelector(".slot");sl.hidden=true;
+  sel=null;banco();
+  const t="¡Excelente! Identificaste "+z.art+".";
+  msg(t+" ★","ok");exito(false);say(t,"correcto_"+z.id.toLowerCase());
+  fbTimer=setTimeout(limpiarMsg,5000);
+  if(CARDS.every(k=>placed[k.id]))setTimeout(fin,1200);
+}
+function incorrecto(c,z){
+  busy=true;
+  sel=null;
+  document.querySelectorAll("#banco .card").forEach(el=>{el.classList.remove("sel");el.querySelector(".cardmain").setAttribute("aria-pressed","false")});
+  const real=ZONAS.find(x=>x.id===c.d);
+  const t="Casi. Esa tarjeta no va ahí. Mira el párrafo marcado en amarillo y toca «Volver a intentarlo».";
+  vistaConsulta(real.p,t);
+  say(t,"incorrecto");
+}
+function reintentar(){
+  parar();
+  busy=false;
+  vistaJuego();
+  say("Elige una tarjeta y luego toca la caja donde va.","juego");
+  const prim=document.querySelector("#banco .cardmain");
+  window.scrollTo(0,0);
+  if(prim)prim.focus({preventScroll:true});
+}
+/* ---- Cierre ---- */
+function fin(){
+  $("topWrap").hidden=true;
+  $("mapa").hidden=true;$("bancoSec").hidden=true;limpiarMsg();
+  const f=$("final");f.hidden=false;
+  f.innerHTML=`<h2 id="hF" tabindex="-1">Story Map completo</h2>
+  <p class="stars" aria-hidden="true" style="margin-bottom:10px">★ ★ ★</p>
+  ${ZONAS.map(z=>`<div class="row"><strong>${z.ico} ${z.nom}</strong>${CARDS.find(c=>c.d===z.id).t}</div>`).join("")}
+  <p style="font-size:.85rem;margin:12px 0"><strong>Personajes:</strong> Mateo (campesino), Antonio (zorro) y los pájaros. <strong>Escenario:</strong> El valle de Puno / La chacra de quinua.</p>
+  <p style="font-weight:700;margin-bottom:10px">¡Gran trabajo! Has organizado toda la historia del zorro y la quinua.</p>
+  <p style="font-size:.9rem;margin-bottom:14px">🌟 ¡Felicitaciones! Eres un gran lector y un gran escritor de cuentos. ¡Nos vemos en la próxima aventura! Hasta pronto. 👋</p>
+  <div class="nom" id="nomBox"><label for="nombre">Escribe tu nombre para tu insignia:</label><input id="nombre" type="text" maxlength="24" autocomplete="off" placeholder="Tu nombre"></div>
+  <button class="primary big" id="btnInsignia">🏅 ¡Ganar mi insignia del cuento!</button>
+  <div class="insig" id="insig" role="status" aria-live="polite">
+    <div id="insigImg"></div>
+    <p>¡Ganaste la insignia del cuento "El zorro y la cosecha de quinua"!</p>
+    <div class="acc">
+      <button class="primary" id="btnDesc">⬇️ Descargar mi insignia</button>
+      <button id="btnImp">🖨️ Imprimir mi insignia</button>
+    </div>
+  </div>`;
+  msg("¡Gran trabajo! Has organizado toda la historia del zorro y la quinua.","ok");
+  exito(true);confeti();say("¡Gran trabajo! Has organizado toda la historia del zorro y la quinua. ¡Felicitaciones! Eres un gran lector y un gran escritor de cuentos. ¡Nos vemos en la próxima aventura! Hasta pronto.","fin");
+  $("hF").focus();$("btnInsignia").onclick=ganarInsignia;
+}
+function esc(t){return t.replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function insigniaSVG(nombre){
+  const n=esc(nombre||"");const fz=n.length>16?12:n.length>11?15:18;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 300" width="240" height="300" role="img" aria-label="Insignia dorada del cuento El zorro y la quinua${n?" de "+n:""}">
+  <rect width="240" height="300" rx="18" fill="#FFFFFF" stroke="#1D4E89" stroke-width="5"/>
+  <polygon points="88,135 72,205 120,184 168,205 152,135" fill="#1D4E89"/>
+  <circle cx="120" cy="95" r="75" fill="#E0A800" stroke="#7A5C00" stroke-width="6"/>
+  <circle cx="120" cy="95" r="58" fill="#FFE600" stroke="#7A5C00" stroke-width="4"/>
+  <polygon points="120,48 131,77 162,79 138,99 146,129 120,112 94,129 102,99 78,79 109,77" fill="#1D4E89"/>
+  <text x="120" y="150" text-anchor="middle" font-family="Verdana,Arial,sans-serif" font-size="13" font-weight="700" fill="#1F2933">LECTOR</text>
+  <text x="120" y="232" text-anchor="middle" font-family="Verdana,Arial,sans-serif" font-size="${fz}" font-weight="700" fill="#1D4E89">${n}</text>
+  <text x="120" y="256" text-anchor="middle" font-family="Verdana,Arial,sans-serif" font-size="11" fill="#1F2933">El zorro y la cosecha de quinua</text>
+  </svg>`;
+}
+let nombreInsignia="";
+function ganarInsignia(){
+  nombreInsignia=($("nombre").value||"").trim();
+  const b=$("btnInsignia");b.disabled=true;b.hidden=true;$("nomBox").hidden=true;
+  $("insigImg").innerHTML=insigniaSVG(nombreInsignia);
+  $("printArea").innerHTML=insigniaSVG(nombreInsignia);
+  $("insig").classList.add("show");
+  $("btnDesc").onclick=descargar;$("btnImp").onclick=()=>window.print();
+  const t="¡Felicitaciones! Ganaste la insignia del cuento El zorro y la cosecha de quinua.";
+  msg("🏅 "+t,"ok");exito(true);confeti();say(t,"insignia");
+  $("insig").scrollIntoView({block:"center",behavior:reduce?"auto":"smooth"});
+}
+function descargar(){
+  const svg=insigniaSVG(nombreInsignia);
+  const img=new Image();
+  img.onload=()=>{
+    const c=document.createElement("canvas");c.width=960;c.height=1200;
+    const g=c.getContext("2d");g.fillStyle="#fff";g.fillRect(0,0,c.width,c.height);g.drawImage(img,0,0,c.width,c.height);
+    c.toBlob(bl=>{
+      const a=document.createElement("a");a.href=URL.createObjectURL(bl);
+      a.download="insignia-"+(nombreInsignia?nombreInsignia.toLowerCase().replace(/[^a-z0-9áéíóúñ]+/gi,"-"):"cuento")+".png";
+      document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+      msg("¡Listo! Tu insignia se guardó en tu dispositivo.","ok");
+    },"image/png");
+  };
+  img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+}
+/* ---- Preferencias y eventos globales ---- */
+document.addEventListener("keydown",e=>{if(e.key==="Escape")parar()});
+$("tMas").onclick=()=>{fs=Math.min(28,fs+2);document.documentElement.style.setProperty("--fs",fs+"px")};
+$("tMenos").onclick=()=>{fs=Math.max(22,fs-2);document.documentElement.style.setProperty("--fs",fs+"px")};
+$("btnRetry").onclick=reintentar;
+function ir(a,b){$(a).hidden=true;$(b).hidden=false;window.scrollTo(0,0)}
+$("btnListo").onclick=()=>{ir("bienvenida","indicaciones");say("¿Qué vamos a hacer? Primero, armamos el mapa de la historia: ordena las tarjetas en Inicio, Nudo y Desenlace. Después, celebramos con estrellas y confeti. ¡Vamos!","indicaciones")};
+$("btnArmar").onclick=()=>{ir("indicaciones","juego");say("Elige una tarjeta y luego toca la caja donde va.","juego");$("hM").scrollIntoView({block:"start"})};
+zonas();banco();
+})();
+</script>
+</body>
+</html>
